@@ -162,6 +162,52 @@ ORDER BY percent DESC;
 SELECT percentile_disc(0.99) within group (order by duracao_jogo)
 FROM infos_partida;
 
+-- Dispersão de abates realizados pelo time azul quando ele venceu
+
+SELECT x_pos, y_pos
+FROM infos_partida
+INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
+WHERE resultado_azul IS TRUE AND equipe ILIKE 'bkills';
+
+-- Dispersão de abates realizados pelo time azul quando ele venceu 
+
+SELECT x_pos, y_pos
+FROM infos_partida
+INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
+WHERE resultado_azul IS FALSE AND equipe ILIKE 'rkills';
+
+-- Diferença de ouro média entre times quando azuis ganham no tempo de partida
+
+SELECT minuto, AVG(ouro)
+FROM ouros
+WHERE tipo = 'golddiff' 
+    AND id_partida IN 
+        (
+            SELECT id_partida FROM infos_partida 
+            WHERE resultado_azul IS TRUE
+        )
+GROUP BY minuto;
+
+-- Diferença de ouro média entre times quando vermelhos ganham no tempo de partida
+
+SELECT minuto, AVG(ouro)
+FROM ouros
+WHERE tipo = 'golddiff' 
+    AND id_partida IN 
+        (
+            SELECT id_partida FROM infos_partida 
+            WHERE resultado_azul IS FALSE
+        )
+GROUP BY minuto;
+
+-- Diferença de ouro média entre vermelhos e azuis nos tempos de partida
+
+SELECT minuto, AVG(ouro)
+FROM ouros
+WHERE tipo = 'golddiff'
+GROUP BY minuto;
+
+
 
 
 >>>>>>> 54a6ef66a72f2a85a8a79aa8ecfd8ec46a26b2d2
