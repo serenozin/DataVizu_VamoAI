@@ -211,3 +211,100 @@ GROUP BY minuto;
 
 
 >>>>>>> 54a6ef66a72f2a85a8a79aa8ecfd8ec46a26b2d2
+
+
+--- Anos analisados 
+select count(distinct ano)
+from infos_partida
+
+--- Tempo médio de chegada na estrutura e destruí - lá
+
+select avg(tempo) , tipo
+from estruturas 
+where tipo is not null
+group by tipo
+order by avg(tempo) DESC
+
+
+---Quantidade de Vitórias e Derrotas no geral.
+
+select tabela1.Equipe, vitorias , derrotas
+from (select Equipe , count(*) as derrotas
+      from(
+            select sigla_azul as Equipe
+            from infos_partida
+            where resultado_azul is false 
+            union all
+            select sigla_vermelho as Equipe
+            from infos_partida
+            where resultado_vermelho is false)
+infos_partida
+group by Equipe
+order by derrotas desc) as tabela1
+inner join (select Equipe , count(*) as vitorias
+        from(
+        select sigla_azul as Equipe
+        from infos_partida
+        where resultado_azul is true 
+        union all
+        select sigla_vermelho as Equipe
+        from infos_partida
+        where resultado_vermelho is true)
+infos_partida
+group by Equipe
+order by vitorias desc) as tabela2
+on tabela1.Equipe = tabela2.Equipe
+order by vitorias desc
+limit 40
+
+--- Quantas partidas estão sendo analisdas e quais campeonatos 
+
+SELECT liga, count(id_partida) as total
+FROM infos_partida
+group by liga
+order by total desc;
+
+--- Quanto tempo, geralmente, dura uma partida?
+SELECT duracao_jogo, count(id_partida)::numeric(10,2) / (SELECT COUNT(*) FROM infos_partida) * 100 as porcentagem
+FROM infos_partida
+GROUP BY duracao_jogo
+
+
+---Duração do Jogo mais rápido.
+
+select duracao_jogo
+from infos_partida
+order by duracao_jogo asc
+limit 1 
+
+--- Duração do jogo mais longo 
+select MAX(duracao_jogo)
+from infos_partida
+
+
+----Torres destruídas de acordo com a rota
+select 
+    CASE 
+        WHEN rota = 'MID_LANE' THEN 'Meio'
+        WHEN rota = 'BOT_LANE' THEN 'Inferior'
+        WHEN rota = 'TOP_LANE' THEN 'Topo'
+    END AS rota,
+    count(rota)::NUMERIC(50,2) / (SELECT COUNT(*) FROM estruturas where rota is not null) * 100 AS total_rota
+from estruturas
+where rota is not null
+group by rota
+order by total_rota DESC;
+
+
+---Total de inibidores destruídos por rota
+select 
+    CASE 
+        WHEN rota = 'MID_LANE' THEN 'Meio'
+        WHEN rota = 'BOT_LANE' THEN 'Inferior'
+        WHEN rota = 'TOP_LANE' THEN 'Topo'
+    END AS rota,
+    count(rota)::NUMERIC(50,2) / (SELECT COUNT(*) FROM estruturas where rota is not null and tipo ilike 'inhibitor') * 100 as total_rota
+from estruturas
+where rota is not null and tipo ilike 'inhibitor'
+group by rota
+order by total_rota DESC;
