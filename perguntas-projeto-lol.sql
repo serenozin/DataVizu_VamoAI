@@ -15,6 +15,22 @@ WHERE tipo = 'golddiff' AND id_partida IN
     )
 GROUP BY minuto;
 
+-- Total de ouro da equipe azul separado por função
+
+SELECT 
+    CASE 
+        WHEN tipo = 'goldblueADC' THEN 'Inferior' 
+        WHEN tipo = 'goldblueJungle' THEN 'Selva' 
+        WHEN tipo = 'goldblueSupport' THEN 'Suporte'
+        WHEN tipo = 'goldblueMiddle' THEN 'Meio'
+        WHEN tipo = 'goldblueTop' THEN 'Topo'
+    END AS rota,
+    (sum(ouro)::NUMERIC(50, 2) / (SELECT sum(ouro) FROM ouros WHERE tipo IN ('goldblueADC','goldblueJungle','goldblueSupport','goldblueMiddle','goldblueTop'))) * 100 as total_ouro
+FROM ouros
+WHERE tipo in ('goldblueADC','goldblueJungle','goldblueSupport','goldblueMiddle','goldblueTop')
+GROUP BY tipo
+ORDER BY total_ouro DESC;
+
 -- Criação de view semelhante a tabela mortes, mas com a rota do jogador em vez do seu username
 CREATE VIEW mortes_rotas AS
     SELECT mortes.id_partida, x_pos, y_pos, tempo,
@@ -60,9 +76,7 @@ CREATE VIEW mortes_rotas AS
             WHEN sigla_vermelho || ' ' || jogador_meio_vermelho = abatido THEN 'Meio'
             WHEN sigla_vermelho || ' ' || jogador_suporte_vermelho = abatido THEN 'Suporte'
         END AS red_victim
-FROM infos_partida
-INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
-WHERE equipe ILIKE 'bkills';
+
 
 <<<<<<< HEAD
 
