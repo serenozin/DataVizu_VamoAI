@@ -63,3 +63,25 @@ CREATE VIEW mortes_rotas AS
 FROM infos_partida
 INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
 WHERE equipe ILIKE 'bkills';
+
+
+-- Dispersão de abates realizados pelo time azul quando ele venceu entre os minutos 0 e 10
+
+SELECT x_pos, y_pos
+FROM infos_partida
+INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
+WHERE resultado_azul IS TRUE AND equipe ILIKE 'bkills' AND tempo BETWEEN 0 AND 10;
+
+-- Dispersão de abates realizados pelo time azul quando ele venceu entre os minutos 10 e 20
+
+SELECT x_pos, y_pos
+FROM infos_partida
+INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
+WHERE resultado_azul IS TRUE AND equipe ILIKE 'bkills' AND tempo BETWEEN 10 AND 20;
+
+-- Dispersão de abates realizados pelo time azul quando ele venceu entre os minutos 20 e 40
+
+SELECT *
+FROM infos_partida
+INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
+WHERE resultado_azul IS TRUE AND equipe ILIKE 'bkills' AND tempo BETWEEN 20 AND 40;
