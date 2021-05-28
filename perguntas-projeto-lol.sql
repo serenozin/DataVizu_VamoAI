@@ -64,6 +64,7 @@ FROM infos_partida
 INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
 WHERE equipe ILIKE 'bkills';
 
+<<<<<<< HEAD
 
 -- Dispersão de abates realizados pelo time azul quando ele venceu entre os minutos 0 e 10
 
@@ -85,3 +86,82 @@ SELECT *
 FROM infos_partida
 INNER JOIN mortes ON infos_partida.id_partida = mortes.id_partida
 WHERE resultado_azul IS TRUE AND equipe ILIKE 'bkills' AND tempo BETWEEN 20 AND 40;
+=======
+-- Os jogadores da rota da selva matam mais jogadores de quais rotas inimigas?
+SELECT red_victim, COUNT(red_victim)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE killer = 'Selva' AND red_victim IS NOT NULL) * 100 as percent
+FROM mortes_rotas
+WHERE killer = 'Selva' AND red_victim IS NOT NULL
+GROUP BY red_victim
+ORDER BY percent DESC;
+
+-- Os jogadores da rota de cima matam mais jogadores de quais rotas inimigas?
+
+SELECT red_victim, COUNT(red_victim)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE killer = 'Topo' AND red_victim IS NOT NULL) * 100 as percent
+FROM mortes_rotas
+WHERE killer = 'Topo' AND red_victim IS NOT NULL
+GROUP BY red_victim
+ORDER BY percent DESC;
+
+-- Os jogadores da rota do meio matam mais jogadores de quais rotas inimigas?
+SELECT red_victim, COUNT(red_victim)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE killer = 'Meio' AND red_victim IS NOT NULL) * 100 as percent
+FROM mortes_rotas
+WHERE killer = 'Meio' AND red_victim IS NOT NULL
+GROUP BY red_victim
+ORDER BY percent DESC;
+
+-- Os jogadores da rota inferior matam mais jogadores de quais rotas inimigas?
+SELECT red_victim, COUNT(red_victim)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE killer = 'Inferior' AND red_victim IS NOT NULL) * 100 as percent
+FROM mortes_rotas
+WHERE killer = 'Inferior' AND red_victim IS NOT NULL
+GROUP BY red_victim
+ORDER BY percent DESC;
+
+-- Os jogadores de suporte matam mais jogadores de quais rotas inimigas?
+SELECT red_victim, COUNT(red_victim)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE killer = 'Suporte' AND red_victim IS NOT NULL) * 100 as percent
+FROM mortes_rotas
+WHERE killer = 'Suporte' AND red_victim IS NOT NULL
+GROUP BY red_victim
+ORDER BY percent DESC;
+
+-- Os jogadores de quais rotas matam mais?
+SELECT killer, COUNT(killer)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas) * 100 AS percent
+FROM mortes_rotas
+WHERE killer IS NOT NULL
+GROUP BY killer
+ORDER BY percent DESC;
+
+-- Os jogadores de quais rotas ajudam a matar mais? - assistente 1
+SELECT assistant_1, COUNT(assistant_1)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE assistant_1 IS NOT NULL) * 100 AS percent
+FROM mortes_rotas
+WHERE assistant_1 IS NOT NULL
+GROUP BY assistant_1
+ORDER BY percent DESC;
+
+-- Os jogadores de quais rotas ajudam a matar mais? - assistente 2
+SELECT assistant_2, COUNT(assistant_2)::NUMERIC(50,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE assistant_2 IS NOT NULL) * 100 AS percent
+FROM mortes_rotas
+WHERE assistant_2 IS NOT NULL
+GROUP BY assistant_2
+ORDER BY percent DESC;
+
+-- Os jogadores de quais rotas ajudam a matar mais? - assistente 3
+SELECT assistant_3, COUNT(assistant_3)::NUMERIC(10,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE assistant_3 IS NOT NULL) * 100 AS percent
+FROM mortes_rotas
+WHERE assistant_3 IS NOT NULL
+GROUP BY assistant_3
+ORDER BY percent DESC;
+
+-- Os jogadores de quais rotas ajudam a matar mais? - assistente 4
+SELECT assistant_4, COUNT(assistant_4)::NUMERIC(100,2) / (SELECT COUNT(*) FROM mortes_rotas WHERE assistant_4 IS NOT NULL) * 100 AS percent
+FROM mortes_rotas
+WHERE assistant_4 IS NOT NULL
+GROUP BY assistant_4
+ORDER BY percent DESC;
+
+-- percentil 99 da duração da partida
+SELECT percentile_disc(0.99) within group (order by duracao_jogo)
+FROM infos_partida;
+
+
+
+>>>>>>> 54a6ef66a72f2a85a8a79aa8ecfd8ec46a26b2d2
