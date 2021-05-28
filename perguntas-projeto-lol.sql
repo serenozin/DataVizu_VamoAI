@@ -322,3 +322,117 @@ from estruturas
 where rota is not null and tipo ilike 'inhibitor'
 group by rota
 order by total_rota DESC;
+
+
+-- -- Quantidade de partidas analisadas
+
+SELECT COUNT(*) FROM infos_partida; 
+
+
+-- Quantidade de anos analisados 
+
+select count(distinct ano)
+from infos_partida
+
+-- Quantidade de equipes 
+
+select count(distinct(equipe))
+from(
+     select distinct(sigla_azul) as equipe
+     from infos_partida
+     union 
+     select distinct(sigla_vermelho) as equipe 
+     from infos_partida)
+infos_partida
+
+-- Quantidade de ligas 
+
+select count(distinct(liga))
+from infos_partida 
+
+-- Quantidade de mortes
+
+select count(abatido)
+from mortes
+where abatido is not null 
+
+- Top 20 dos campeões mais banidos
+
+select personagem, count(*) as contagem
+from( select personagem_1 as personagem 
+      from personagens_banidos 
+      union all 
+      select personagem_2 as personagem 
+      from personagens_banidos 
+      union all 
+      select personagem_3 as personagem 
+      from personagens_banidos
+      union all
+      select personagem_4 as personagem
+      from personagens_banidos
+      union all
+      select personagem_5 as personagem 
+      from personagens_banidos) 
+personagens_banidos 
+where personagem is not null
+group by personagem
+order by contagem desc
+limit 20
+
+
+-- Top 15 campeões mais escolhidos sem distinção de função 
+
+SELECT personagem, COUNT(personagem) as contagem
+from (
+    SELECT personagem_topo_azul AS personagem 
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_topo_vermelho AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_cacador_azul AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_cacador_vermelho AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_meio_azul AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_meio_vermelho AS personagem
+    FROM infos_partida
+    
+    UNION ALL
+    
+    SELECT personagem_atirador_azul AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_atirador_vermelho AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_suporte_azul AS personagem
+    FROM infos_partida 
+    
+    UNION ALL 
+    
+    SELECT personagem_suporte_vermelho AS personagem
+    FROM infos_partida 
+)
+infos_partida
+group by personagem
+order by contagem desc
+limit 15;
